@@ -17,14 +17,15 @@ package config
 import (
 	"bufio"
 	"encoding/json"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"os/user"
 	"path/filepath"
 	"strings"
+
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mendersoftware/mender-connect/client/https"
 )
@@ -206,7 +207,13 @@ func isExecutable(path string) bool {
 func isInShells(path string) bool {
 	file, err := os.Open("/etc/shells")
 	if err != nil {
-		log.Fatal(err)
+		// /etc/shells doesn't exist on some embedded platforms but
+		// /bin/sh should still be allowed
+		if path == "/bin/sh" {
+			return true
+		} else {
+			log.Fatal(err)
+		}
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
