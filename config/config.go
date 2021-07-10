@@ -209,6 +209,7 @@ func isInShells(path string) bool {
 	if err != nil {
 		// /etc/shells doesn't exist on some embedded platforms but
 		// /bin/sh should still be allowed
+		log.Info("Shell path: ", path)
 		if path == "/bin/sh" {
 			return true
 		} else {
